@@ -24,9 +24,10 @@ The program is licensed under the Apache License, Version 2.0. See LICENSE for t
 
 In folder 'project':
 
+```
 conda env create -f environment.yml
-
 bash install.sh 
+```
 
 # HOW TO RUN
 

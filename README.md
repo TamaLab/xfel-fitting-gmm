@@ -10,11 +10,11 @@ The program is licensed under the Apache License, Version 2.0. See LICENSE for t
 
 3. Tetsuro Nagai <tnagai@fukuoka-u.ac.jp> - tools dealing with the XFEL difraction images of GMM
 
-4. Osamu Miyashita <osamu.miyashita@riken.jp> - modification of Monte-Carlo sampling
+4. Osamu Miyashita <osamu.miyashita@riken.jp>
 
 5. Florence Tama <ﬂorence.tama@nagoya-u.jp>
 
-   This XFEL fitting program has been developed at Nagoya University.
+   This XFEL fitting program has been developed at Nagoya University and RIKEN.
 
 # HOW TO INSTALL
 

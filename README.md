@@ -44,7 +44,7 @@ bash install.sh
 ```  
   afmEmulator -f emulate_Beg_AK.yaml
 ```  
-  ([afmEmulator](project/bin/afmEmulator) is in project/bin, [emulate_Beg_EF2.yaml](pipeline/input_files/AK/emulate_Beg_AK.yaml) is located at /pipeline/input_files/EF2)
+  ([afmEmulator](project/bin/afmEmulator) is in project/bin, [emulate_Beg_AK.yaml](pipeline/input_files/AK/emulate_Beg_AK.yaml) is located at /pipeline/input_files/EF2)
 ```  
   gmconvert A2G -ipdb End_AK.pdb -ogmm End_AK_214.gmm -ng 214
 ```  

@@ -56,7 +56,7 @@ bash install.sh
 ```  
 - Initial parameters, such as RESTRAINTS, det_width,det_dist, wave_length, SEED, lowest_k and circle_width are included in inp.yaml.
 
-- Output setting is in inp.yaml.
+- Output setting is in [inp.yaml](pipeline/inp.yaml).
 
 ## NOTES
 

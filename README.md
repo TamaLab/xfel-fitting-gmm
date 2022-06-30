@@ -22,7 +22,11 @@ The program is licensed under the Apache License, Version 2.0. See LICENSE for t
 
 # HOW TO INSTALL
 
-Run install.sh in folder 'project'
+In folder 'project':
+
+conda env create -f environment.yml
+
+bash install.sh 
 
 # HOW TO RUN
 

@@ -1,6 +1,8 @@
- # LICENSING
-
-The program is licensed under the Apache License, Version 2.0. See LICENSE for the full license text.
+ # XFEL-Fitting-GMM
+ 
+ A Hybrid Approach to Study Large Conformational Transitions of Biomolecules from Single Particle XFEL Diffraction Data
+ Asi, H., Dasgupta, B., Nagai, T., Miyashita, O. & Tama, F.
+submitted.
 
 # AUTHORS of the program
 
@@ -19,7 +21,7 @@ The program is licensed under the Apache License, Version 2.0. See LICENSE for t
    This XFEL fitting program has been developed at Nagoya University and RIKEN.
 
 # RELATED PUBLICATIONS
-- Asi, H., Dasgupta, B., Nagai, T., Miyashita, O. & Tama, F. A Hybrid Approach to Study Large Conformational Transitions of Biomolecules from Single Particle XFEL Diffraction Data, submitted.
+
 - Dasgupta, B., Miyashita, O., Uchihashi, T. & Tama, F. Reconstruction of Three-Dimensional Conformations of Bacterial ClpB from High-Speed Atomic-Force-Microscopy Images. Front Mol Biosci 8, 704274 (2021).
 - Dasgupta, B., Miyashita, O. & Tama, F. Reconstruction of low-resolution molecular structures from simulated atomic force microscopy images. Biochim Biophys Acta Gen Subj 1864, 129420 (2020).
 - Nagai, T., Mochizuki, Y., Joti, Y., Tama, F. & Miyashita, O. Gaussian mixture model for coarse-grained modeling from XFEL. Optics Express 26, 26734 (2018).
@@ -58,7 +60,9 @@ bash install.sh
 
 Tested with python2.7, anaconda environment only. May not work correctly with python3.
 
+# LICENSING
 
+The program is licensed under the Apache License, Version 2.0. See LICENSE for the full license text.
 
 
 

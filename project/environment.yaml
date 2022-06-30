@@ -1,4 +1,4 @@
-name: python2.7
+name: xfel_fitting
 channels:
   - anaconda
   - defaults

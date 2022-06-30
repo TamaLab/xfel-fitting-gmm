@@ -1,0 +1,55 @@
+---
+PROJECT: EMULATE
+MODE: Debug
+NTHR: 8
+DPI: 100
+INPUTFILE:
+  FORMAT: pdb
+  NAME: End.pdb
+DOMAIN:
+  SEGMENT:
+  - 3-48,74-221,329-344
+  - 67-73,345-485
+  - 222-270
+  - 271-328
+  - 486-561
+  - 562-569,722-828
+  - 570-721,829-842
+OUTPUTFILE:
+  IMGFILE: End.png
+  VRMLFILE: End.vrml
+  GMMFILE: End_7.gmm
+ELLIPSOID:
+  NLEVEL: 1
+  SCALESD: 
+  - 1.0
+  WEIGHT:
+  - mass
+  LEVEL:
+  - domain
+MESH:
+  GRIDSIZE: 1.0
+  SCALERADII: 1.00  
+  MAGNIFICATION: 1.0
+  STEP:
+    X: 
+      VALUE: 5.0
+      FORMAT: STEP
+    Y:
+      VALUE: 5.0
+      FORMAT: STEP
+    Z:
+      VALUE: 256.0
+      FORMAT: LENGTH
+  RANGE:
+    X: 500.0
+    Y: 500.0
+    Z: 500.0
+  BUFFER:
+    X: 50.0
+    Y: 50.0
+    Z: 50.0
+  ZNOISE:
+    FACTOR: 0.0
+    PERCENTILE: 0
+  LEVEL: domain

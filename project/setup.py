@@ -1,14 +1,9 @@
 from setuptools import setup
 
-def readme():
-    with open('README.rst') as f:
-        return f.read()
-
-
 setup(name='AFM',
       version='0.1',
       description='Sampling against AFM/XFEL data',
-      long_description=readme(),
+      long_description='Sampling against AFM/XFEL data',
       url='',
       license='Apache2.0',
       packages=['AFM'], 

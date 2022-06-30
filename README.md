@@ -53,7 +53,7 @@ bash install.sh
 ```
   python pipeline.py inp.yaml Beg_AK_3.gmm End_AK_214.gmm
 ```  
-- Initial parameters, such as RESTRAINTS, det_width,det_dist, wave_length, SEED, lowest_k and circle_width are included in [inp.yaml](pipeline/inp.yaml).
+- Initial parameters, such as RESTRAINTS, det_width,det_dist, wave_length, SEED, lowest_k, and circle_width are included in [inp.yaml](pipeline/inp.yaml).
 
 - Output setting is in [inp.yaml](pipeline/inp.yaml).
 

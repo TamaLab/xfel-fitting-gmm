@@ -38,7 +38,7 @@ bash install.sh
 ```
 # HOW TO RUN
 
-- Before running the code, user need to make a output directory named s1. (refer to 'input.yaml'> 'OUTPUT'>'IMAGEPATH','STATPATH','GMDATPATH')
+- Before running the code, user need to make a output directory named s1. (refer to 'input.yaml'>'OUTPUT'>'IMAGEPATH','STATPATH','GMDATPATH')
 
 - Beg_EF2_7.gmm and End_EF2_814.gmm are input gmm file of initial and target conformation. They are created from pdb files using following commands: 
 ```  
@@ -48,7 +48,9 @@ bash install.sh
 ```  
   gmconvert A2G -ipdb End_EF2.pdb -ogmm End_EF2_814.gmm -ng 819
 ```  
-  (gmconvert software: https://pdbj.org/gmfit/doc_gmconvert/README_gmconvert.html)- Command to run XFEL GMM fitting: 
+  (gmconvert software: https://pdbj.org/gmfit/doc_gmconvert/README_gmconvert.html)
+
+- Command to run XFEL GMM fitting: 
 ```
   python pipeline.py inp.yaml Beg_EF2_7.gmm End_EF2_814.gmm
 ```  

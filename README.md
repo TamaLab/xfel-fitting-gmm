@@ -30,20 +30,20 @@
 
 ## HOW TO INSTALL
 
-In folder 'project':
+In the folder 'project':
 ```
 conda env create -f environment.yml
 bash install.sh 
 ```
 ## HOW TO RUN
 
-- Before running the code, user need to make a output directory named s1. (refer to 'inp.yaml'>'OUTPUT'>'IMAGEPATH','STATPATH','GMDATPATH')
+- Before running the code, user need to make an output directory named s1. (refer to 'inp.yaml'>'OUTPUT'>'IMAGEPATH','STATPATH','GMDATPATH')
 
-- [Beg_AK_3.gmm](pipeline/Beg_AK_3.gmm) and [End_AK_214.gmm](pipeline/End_AK_214.gmm) are input gmm file of initial and target conformation. They are created from pdb files using following commands: 
+- [Beg_AK_3.gmm](pipeline/Beg_AK_3.gmm) and [End_AK_214.gmm](pipeline/End_AK_214.gmm) are input gmm files of initial and target conformation. They are created from pdb files using following commands: 
 ```  
   afmEmulator -f emulate_Beg_AK.yaml
 ```  
-  ([afmEmulator](project/bin/afmEmulator) is in project/bin, [emulate_Beg_AK.yaml](pipeline/input_files/AK/emulate_Beg_AK.yaml) is located at /pipeline/input_files/AK)
+  ([afmEmulator](project/bin/afmEmulator) is in /project/bin, [emulate_Beg_AK.yaml](pipeline/input_files/AK/emulate_Beg_AK.yaml) is located at /pipeline/input_files/AK)
 ```  
   gmconvert A2G -ipdb End_AK.pdb -ogmm End_AK_214.gmm -ng 214
 ```  

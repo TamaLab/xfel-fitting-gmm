@@ -7,7 +7,7 @@ DPI: 100
 RESTRAINTS:
   DOMAIN_EXCL: 
     EVALUATE: True
-    STRENGTH: 0.02
+    STRENGTH: 0.10
 OPTIMIZE:
   MAX_MOVEMENT:
     TRANSLATION: 1.0
@@ -20,7 +20,7 @@ OPTIMIZE:
   TEMP: 1.0
   TEMP_MECH: 300.0
   WEIGHT: 100000.0
-  STEPS: 50000
+  STEPS: 100000
   STOPBY: propose
   LIMIT_PROPOSAL_PERCENT: 0.001
   PERIOD_TRJ: 1
@@ -43,9 +43,9 @@ OPTIMIZE:
     GMDATFILE: s1_
     GMDATPERIOD: 1
 correlation: nagai
-det_width: 0.20e10
+det_width: 0.30e10
 det_dist: 10.0e10
 wave_length: 1.0
-SEED: 900
+SEED: 100
 lowest_k: 0.01
-circle_width: 0.002
+circle_width: 0.004

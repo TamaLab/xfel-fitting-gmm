@@ -1,0 +1,51 @@
+---
+PROJECT: EMULATE
+MODE: Debug
+NTHR: 8
+DPI: 100
+INPUTFILE:
+  FORMAT: pdb
+  NAME: Beg_AK.pdb
+DOMAIN:
+  SEGMENT:
+  - 1-29,68-117,161-214
+  - 118-160
+  - 30-67
+OUTPUTFILE:
+  IMGFILE: Beg_AK_3.png
+  VRMLFILE: Beg_AK_3.vrml
+  GMMFILE: Beg_AK_3.gmm
+ELLIPSOID:
+  NLEVEL: 1
+  SCALESD: 
+  - 1.0
+  WEIGHT:
+  - mass
+  LEVEL:
+  - domain
+MESH:
+  GRIDSIZE: 1.0
+  SCALERADII: 1.00  
+  MAGNIFICATION: 1.0
+  STEP:
+    X: 
+      VALUE: 5.0
+      FORMAT: STEP
+    Y:
+      VALUE: 5.0
+      FORMAT: STEP
+    Z:
+      VALUE: 256.0
+      FORMAT: LENGTH
+  RANGE:
+    X: 500.0
+    Y: 500.0
+    Z: 500.0
+  BUFFER:
+    X: 50.0
+    Y: 50.0
+    Z: 50.0
+  ZNOISE:
+    FACTOR: 0.0
+    PERCENTILE: 0
+  LEVEL: domain

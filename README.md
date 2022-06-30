@@ -20,7 +20,7 @@
 
 6. Florence Tama <florence.tama@nagoya-u.jp>
 
-   This XFEL fitting program has been developed at Nagoya University and RIKEN.
+This XFEL fitting program has been developed at Nagoya University and RIKEN.
 
 ## RELATED PUBLICATIONS
 

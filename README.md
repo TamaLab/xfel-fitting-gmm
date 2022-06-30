@@ -36,7 +36,7 @@ Run install.sh in folder 'project'
   
   (afmEmulator is in project/bin, emulate_Beg.yaml is located at /pipeline/input_files)
   
-  gmconvert A2G -ipdb End.pdb -ogmm End.gmm -ng 819
+  gmconvert A2G -ipdb End.pdb -ogmm End_814.gmm -ng 819
   
   (gmconvert software: https://pdbj.org/gmfit/doc_gmconvert/README_gmconvert.html)
 

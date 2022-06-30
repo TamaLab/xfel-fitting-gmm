@@ -60,7 +60,7 @@ bash install.sh
 
 ## NOTES
 
-Tested with python2.7, anaconda environment only. May not work correctly with python3.
+Tested with python 2.7, anaconda environment only. May not work correctly with python 3.
 
 ## LICENSING
 

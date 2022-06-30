@@ -34,7 +34,7 @@ Run install.sh in folder 'project'
   
   afmEmulator -f emulate_Beg.yaml
   
-  (afmEmulator is in project/bin, emulate_Beg.yaml is located at /pipeline/init_files)
+  (afmEmulator is in project/bin, emulate_Beg.yaml is located at /pipeline/input_files)
   
   gmconvert A2G -ipdb End.pdb -ogmm End.gmm -ng 819
   

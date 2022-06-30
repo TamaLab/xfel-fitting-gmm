@@ -33,7 +33,6 @@
 In folder 'project':
 ```
 conda env create -f environment.yml
-
 bash install.sh 
 ```
 ## HOW TO RUN

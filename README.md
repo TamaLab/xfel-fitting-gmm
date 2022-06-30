@@ -11,6 +11,7 @@ The program is licensed under the Apache License, Version 2.0. See LICENSE for t
 3. Tetsuro Nagai <tnagai@fukuoka-u.ac.jp> - tools dealing with the XFEL difraction images of GMM
 
 4. Osamu Miyashita <osamu.miyashita@riken.jp>
+5. Florence Tama <florence.tama@nagoya-u.jp>
 
 5. Florence Tama <ﬂorence.tama@nagoya-u.jp>
 

@@ -12,9 +12,9 @@ The program is licensed under the Apache License, Version 2.0. See LICENSE for t
 
 4. Osamu Miyashita <osamu.miyashita@riken.jp>
 
-6. Florence Tama <florence.tama@nagoya-u.jp>
+5. Florence Tama <florence.tama@nagoya-u.jp>
 
-5. Florence Tama <ﬂorence.tama@nagoya-u.jp>
+
 
    This XFEL fitting program has been developed at Nagoya University and RIKEN.
 

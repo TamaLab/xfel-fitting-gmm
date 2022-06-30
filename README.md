@@ -1,9 +1,7 @@
  # XFEL-Fitting-GMM
  
  A Hybrid Approach to Study Large Conformational Transitions of Biomolecules from Single Particle XFEL Diffraction Data
- 
  Asi, H., Dasgupta, B., Nagai, T., Miyashita, O. & Tama, F.
-
 *submitted*
 
 ## AUTHORS of the program

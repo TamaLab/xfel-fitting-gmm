@@ -38,7 +38,7 @@ bash install.sh
 ```
 ## HOW TO RUN
 
-- Before running the code, user need to make a output directory named s1. (refer to 'input.yaml'>'OUTPUT'>'IMAGEPATH','STATPATH','GMDATPATH')
+- Before running the code, user need to make a output directory named s1. (refer to 'inp.yaml'>'OUTPUT'>'IMAGEPATH','STATPATH','GMDATPATH')
 
 - [Beg_EF2_7.gmm](pipeline/Beg_EF2_7.gmm) and [End_EF2_814.gmm](pipeline/End_EF2_814.gmm) are input gmm file of initial and target conformation. They are created from pdb files using following commands: 
 ```  

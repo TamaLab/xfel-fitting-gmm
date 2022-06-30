@@ -28,11 +28,13 @@ Run install.sh in folder 'project'
 
 - Command to run: 
 
-  python pipeline.py inp.yaml Beg_3.gmm End_814.gmm
+  python pipeline.py inp.yaml Beg_7.gmm End_814.gmm
   
-- Beg_3.gmm and End_814.gmm are input gmm file of initial and target conformation. They are created from pdb files using following commands: 
+- Beg_7.gmm and End_814.gmm are input gmm file of initial and target conformation. They are created from pdb files using following commands: 
   
-  gmconvert A2G -ipdb Beg.pdb -ogmm Beg.gmm -ng 3
+  afmEmulator -f emulate_Beg.yaml
+  
+  (afmEmulator is in project/bin, emulate_Beg.yaml is located at /pipeline/init_files)
   
   gmconvert A2G -ipdb End.pdb -ogmm End.gmm -ng 819
   

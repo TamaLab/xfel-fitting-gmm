@@ -40,10 +40,6 @@ bash install.sh
 
 - Before running the code, user need to make a output directory named s1. (refer to 'input.yaml'> 'OUTPUT'>'IMAGEPATH','STATPATH','GMDATPATH')
 
-- Command to run: 
-```
-  python pipeline.py inp.yaml Beg_EF2_7.gmm End_EF2_814.gmm
-```  
 - Beg_EF2_7.gmm and End_EF2_814.gmm are input gmm file of initial and target conformation. They are created from pdb files using following commands: 
 ```  
   afmEmulator -f emulate_Beg_EF2.yaml
@@ -52,8 +48,10 @@ bash install.sh
 ```  
   gmconvert A2G -ipdb End_EF2.pdb -ogmm End_EF2_814.gmm -ng 819
 ```  
-  (gmconvert software: https://pdbj.org/gmfit/doc_gmconvert/README_gmconvert.html)
-
+  (gmconvert software: https://pdbj.org/gmfit/doc_gmconvert/README_gmconvert.html)- Command to run XFEL GMM fitting: 
+```
+  python pipeline.py inp.yaml Beg_EF2_7.gmm End_EF2_814.gmm
+```  
 - Initial parameters, such as RESTRAINTS, det_width,det_dist, wave_length, SEED, lowest_k and circle_width are included in inp.yaml.
 
 - Output setting is in inp.yaml.

@@ -6,7 +6,7 @@
 
 *submitted*
 
-# AUTHORS of the program
+## AUTHORS of the program
 
 1. Bhaskar Dasgupta <bhaskardg08@gmail.com> - inp.yaml, Monte-Carlo sampling
 
@@ -22,13 +22,13 @@
 
    This XFEL fitting program has been developed at Nagoya University and RIKEN.
 
-# RELATED PUBLICATIONS
+## RELATED PUBLICATIONS
 
-- Dasgupta, B., Miyashita, O., Uchihashi, T. & Tama, F. Reconstruction of Three-Dimensional Conformations of Bacterial ClpB from High-Speed Atomic-Force-Microscopy Images. Front Mol Biosci 8, 704274 (2021).
-- Dasgupta, B., Miyashita, O. & Tama, F. Reconstruction of low-resolution molecular structures from simulated atomic force microscopy images. Biochim Biophys Acta Gen Subj 1864, 129420 (2020).
-- Nagai, T., Mochizuki, Y., Joti, Y., Tama, F. & Miyashita, O. Gaussian mixture model for coarse-grained modeling from XFEL. Optics Express 26, 26734 (2018).
+- Dasgupta, B., Miyashita, O., Uchihashi, T. & Tama, F. Reconstruction of Three-Dimensional Conformations of Bacterial ClpB from High-Speed Atomic-Force-Microscopy Images. Front Mol Biosci **8**, 704274 (2021).
+- Dasgupta, B., Miyashita, O. & Tama, F. Reconstruction of low-resolution molecular structures from simulated atomic force microscopy images. Biochim Biophys Acta Gen Subj **1864**, 129420 (2020).
+- Nagai, T., Mochizuki, Y., Joti, Y., Tama, F. & Miyashita, O. Gaussian mixture model for coarse-grained modeling from XFEL. Optics Express **26**, 26734 (2018).
 
-# HOW TO INSTALL
+## HOW TO INSTALL
 
 In folder 'project':
 ```
@@ -36,7 +36,7 @@ conda env create -f environment.yml
 
 bash install.sh 
 ```
-# HOW TO RUN
+## HOW TO RUN
 
 - Before running the code, user need to make a output directory named s1. (refer to 'input.yaml'>'OUTPUT'>'IMAGEPATH','STATPATH','GMDATPATH')
 
@@ -58,11 +58,11 @@ bash install.sh
 
 - Output setting is in inp.yaml.
 
-# NOTES
+## NOTES
 
 Tested with python2.7, anaconda environment only. May not work correctly with python3.
 
-# LICENSING
+## LICENSING
 
 The program is licensed under the Apache License, Version 2.0. See LICENSE for the full license text.
 

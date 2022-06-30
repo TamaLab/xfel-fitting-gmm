@@ -29,6 +29,14 @@ Run install.sh in folder 'project'
 - Command to run: 
 
   python pipeline.py inp.yaml Beg_3.gmm End_814.gmm
+  
+- Beg_3.gmm and End_814.gmm are input gmm file of initial and target conformation. They are created from pdb files using following commands: 
+  
+  gmconvert A2G -ipdb Beg.pdb -ogmm Beg.gmm -ng 3
+  
+  gmconvert A2G -ipdb End.pdb -ogmm End.gmm -ng 819
+  
+  (gmconvert software: https://pdbj.org/gmfit/doc_gmconvert/README_gmconvert.html)
 
 - Initial parameters, such as RESTRAINTS, det_width,det_dist, wave_length, SEED, lowest_k and circle_width are included in inp.yaml.
 

@@ -10,9 +10,11 @@ The program is licensed under the Apache License, Version 2.0. See LICENSE for t
 
 3. Han Asi <mglasgan@gmail.com> - pipeline program, modification of inp.yaml, modification of Monte-Carlo sampling
 
-4. Osamu Miyashita <osamu.miyashita@riken.jp>
+4. Yuki Mochizuki - initial study on XFEL diffraction pattern calculation from GMM
 
-5. Florence Tama <florence.tama@nagoya-u.jp>
+5. Osamu Miyashita <osamu.miyashita@riken.jp>
+
+6. Florence Tama <florence.tama@nagoya-u.jp>
 
 
 

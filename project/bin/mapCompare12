@@ -1,0 +1,79 @@
+#!/usr/bin/env python
+from os.path import isfile,isdir
+import AFM
+import numpy as np
+import yaml
+import glob
+import argparse
+import sys
+from scipy.stats.stats import pearsonr
+
+def to_bool(value):
+    valid = {'true': True, 't': True, '1': True,
+             'false': False, 'f': False, '0': False,
+             }
+    if isinstance(value, bool):
+        return value
+    if not isinstance(value, basestring):
+        raise ValueError('invalid literal for boolean. Not a string.')
+    lower_value = value.lower()
+    if lower_value in valid:
+        return valid[lower_value]
+    else:
+        raise ValueError('invalid literal for boolean: "%s"' % value)
+
+# Parse arguments
+parser = argparse.ArgumentParser(description='Correlation between two 3D GMMs using Voxel data')
+parser.add_argument("-f1","--file1",dest="File1",help="input 1")
+parser.add_argument("-f2","--file2",dest="File2",help="input 2")
+parser.add_argument("-go1","--origin1",dest="origin1",help="input 1 origin",default="0:0:0")
+parser.add_argument("-go2","--origin2",dest="origin2",help="input 2 origin",default="0:0:0")
+parser.add_argument("-gr1","--grid1",dest="grid1",help="input 1 grid",default="100:100:100")
+parser.add_argument("-gr2","--grid2",dest="grid2",help="input 2 grid",default="100:100:100")
+parser.add_argument("-gw","--gridWidth",dest="gw",help="input grid-width",default=4.0)
+
+interactiveSession=False
+try:
+  __file__
+except NameError:
+  interactiveSession=True
+
+if interactiveSession:
+  print("This script can't be run interactively")
+  sys.exit()
+else:
+  args = parser.parse_args()
+
+origin1 = [float(s) for s in args.origin1.split(':')]
+origin2 = [float(s) for s in args.origin2.split(':')]
+grid1 = [int(g) for g in args.grid1.split(':')]
+grid2 = [int(g) for g in args.grid2.split(':')]
+
+gw = float(args.gw)
+
+if isfile(args.File1):  
+  vox1 = AFM.Voxel(origin=origin1)
+  vox1.setupVoxel(fromFile=True,filename=args.File1)  
+else:
+  print("Input File1 %s not found" % args.File1)
+  sys.exit()
+if isfile(args.File2):
+  vox2 = AFM.Voxel(origin=origin2)
+  vox2.setupVoxel(fromFile=True,filename=args.File2)
+else:
+  print("Input File2 %s not found" % args.File2)
+  sys.exit()
+
+ng = np.array([vox1.getNumGridbyGridWidth(gw=gw),vox2.getNumGridbyGridWidth(gw=gw)])
+ng = np.max(ng,axis=0)
+vox1.setGridWidth(gw); vox2.setGridWidth(gw);
+vox1.setNumGrid(ng); vox2.setNumGrid(ng);
+vox1.createGrid(); vox1.CalProbDensity();
+vox2.createGrid(); vox2.CalProbDensity();
+
+G1 = np.ravel(vox1.ProbDensity)
+G2 = np.ravel(vox2.ProbDensity)
+cc,_ = pearsonr(G1,G2)
+print("CC %.6f" % cc)
+
+

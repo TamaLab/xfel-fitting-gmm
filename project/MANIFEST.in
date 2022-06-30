@@ -1,0 +1,3 @@
+include README.rst
+include AFM/data.yml
+include AFM/radii.yml

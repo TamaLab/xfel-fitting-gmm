@@ -1,0 +1,108 @@
+#!/usr/bin/env python
+
+import io,struct,sys,time,random
+from os.path import splitext,isfile
+from math import pi,log,sqrt,exp
+from operator import itemgetter
+from datetime import datetime
+from threading import Thread
+
+import numpy as np
+
+import AFM
+import yaml
+import argparse
+
+import matplotlib
+matplotlib.use('Agg')
+
+import matplotlib.pyplot as plt
+import copy
+
+# Initial Set up
+
+dpi = plt.gcf().dpi
+
+_DEFAULT_EXCL_DOMAIN_DISTANCE_         = 20.0
+_DEFAULT_CONSECUTIVE_RESIDUE_DISTANCE_ = 3.78
+_DEFAULT_CONSECUTIVE_RESIDUE_AMIN_     = 100.0
+_DEFAULT_CONSECUTIVE_RESIDUE_AMAX_     = 140.0
+_DEFAULT_INTRA_RESIDUE_DISTANCE_       = 2.5
+_DEFAULT_EXCL_RESIDUE_DISTANCE_        = 10.0
+
+RESTR_TYPES = {};
+RESTR_NAME = [{'NAME': 'RESIDUE_CONNECTION'},
+              {'NAME': 'RESIDUE_TRIPLET'},
+              {'NAME': 'RESIDUE_QUARTET'},
+              {'NAME': 'RESIDUE_INTERNAL'},
+              {'NAME': 'RESIDUE_EXCL'},
+              {'NAME': 'DOMAIN_PAIR'},
+              {'NAME': 'DOMAIN_EXCL'}]
+for i in range(len(RESTR_NAME)): RESTR_TYPES[i] = RESTR_NAME[i]
+
+# Parse arguments
+
+parser = argparse.ArgumentParser(description='Emulate AFM Image')
+parser.add_argument("-f","--file",dest="projectFile",help="input options",metavar="FILE",
+                    default="emu.yaml")
+parser.add_argument("-s","--seed",dest="seed",help="random seed",metavar="SEED",
+                    default=100,type=int)
+interactiveSession=False
+try:
+  __file__
+except NameError:
+  interactiveSession=True
+
+if interactiveSession:
+  args = parser.parse_args("-f emu.yaml".split())
+else:
+  args = parser.parse_args()
+
+if isfile(args.projectFile):
+  print("Reading project options from projectFile %s" % args.projectFile)
+  with open(args.projectFile, 'r') as stream:
+    try:
+      opt = yaml.load(stream)
+    except yaml.YAMLError as exc:
+      print(exc)
+else:  
+  raise Exception("Input Project File %s not found" % args.projectFile)
+
+if 'SEED' in opt: 
+  seed = opt['SEED']
+else: 
+  seed = args.seed
+  opt['SEED'] = seed
+
+# Set-up options
+
+gopt = AFM.OptionAFM()
+nerr = gopt.reset_options(opt)
+if nerr > 0: sys.exit()
+
+# Initialize a project
+
+project = AFM.Project(gopt)
+
+# Read Input and set representation
+project.set_input(asis=False,set_representation=True)
+if opt['INPUTFILE']['FORMAT'] == 'pdb':
+  p0 = AFM.Project(gopt) # For calculation of transformation
+  p0.set_input(asis=True,set_representation=False)
+  shift = np.array([opt['MESH']['BUFFER']['X'],opt['MESH']['BUFFER']['Y'],opt['MESH']['BUFFER']['Z']])
+  translation = shift - p0.pdb.objMin
+  project.write_pdb()  
+
+# Set Image property
+project.set_resolutions()
+project.set_image_property()
+
+# Set up ellipsoid representation
+project.representation.SetupMesh(filename=opt['OUTPUTFILE']["IMGFILE"],dpi=project.opt['DPI'])
+project.representation.dumpMeshGMM(filename=opt['OUTPUTFILE']["GMMFILE"])
+project.representation.dumpMeshVRML(filename=opt['OUTPUTFILE']["VRMLFILE"])
+if opt['INPUTFILE']['FORMAT'] == 'pdb':
+  print("Translation applied to coordinate: %.8f %.8f %.8f" % (translation[0],translation[1],translation[2]))
+
+
+

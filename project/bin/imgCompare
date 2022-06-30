@@ -1,0 +1,55 @@
+#!/usr/bin/env python
+from os.path import isfile,isdir
+import AFM
+import numpy as np
+import yaml
+import glob
+import argparse
+import sys
+
+# Parse arguments
+
+parser = argparse.ArgumentParser(description='Compare AFM Images')
+parser.add_argument("-f","--file",dest="projectFile",help="input options",metavar="FILE",
+                    default="icc.yaml")
+parser.add_argument("-o","--outFile",dest="outFile",help="output File",
+                    default="icc.out")
+
+interactiveSession=False
+try:
+  __file__
+except NameError:
+  interactiveSession=True
+
+if interactiveSession:
+  args = parser.parse_args("-f icc.yaml".split())
+else:
+  args = parser.parse_args()
+
+if isfile(args.projectFile):
+  print("Reading project options from projectFile %s" % args.projectFile)
+  with open(args.projectFile, 'r') as stream:
+    try:
+      opt = yaml.load(stream)
+    except yaml.YAMLError as exc:
+      print(exc)
+else:  
+  raise Exception("Input Project File %s not found" % args.projectFile)
+
+if not isfile(args.outFile):
+  print("Output file %s" % args.outFile)
+  outFile = args.outFile
+else:
+  raise Exception("Output File %s already present" % args.outFile)
+
+# Set-up options
+
+gopt = AFM.OptionAFM()
+nerr = gopt.reset_options(opt)
+# 4 errors are permitted
+if nerr > 4: sys.exit()
+
+
+
+
+

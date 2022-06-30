@@ -1,0 +1,117 @@
+#!/usr/bin/env python
+from __future__ import print_function
+from os.path import isfile,isdir
+import AFM
+import numpy as np
+import h5py
+import argparse
+import sys
+
+def to_bool(value):
+    valid = {'true': True, 't': True, '1': True,
+             'false': False, 'f': False, '0': False,
+             }
+    if isinstance(value, bool):
+        return value
+    if not isinstance(value, basestring):
+        raise ValueError('invalid literal for boolean. Not a string.')
+    lower_value = value.lower()
+    if lower_value in valid:
+        return valid[lower_value]
+    else:
+        raise ValueError('invalid literal for boolean: "%s"' % value)
+
+
+# Parse arguments
+parser = argparse.ArgumentParser(description='Read trajectory')
+parser.add_argument("-f","--inputfile",dest="iFile",help="input file name")
+parser.add_argument("-o","--outputfile",dest="oFile",help="output file name",
+                    default=None)
+parser.add_argument("-i","--index",dest="index",help="snapshot index",default=None)
+parser.add_argument("-info","--information",dest="info",help="Print information",
+                    action="store_true",default=True)
+parser.add_argument("-type","--type",dest="type",help="Type of information",
+                    default='Ellipsoid')
+
+interactiveSession=False
+try:
+  __file__
+except NameError:
+  interactiveSession=True
+
+if interactiveSession:
+  print("This script can't be run interactively")
+  sys.exit()
+else:
+  args = parser.parse_args()
+
+def print_summary(hf,dataName):
+  key0 = hf.keys()
+  nkey0 = len(key0)
+  print("Number of keys under root: %d" % nkey0)  
+  for k0 in range(nkey0):
+    name0 = key0[k0]
+    print("Type of group under root: %s" % name0)
+    data0 = hf[name0]
+    key1 = data0.keys()
+    nkey1 = len(key1)
+    print("Number of keys under %s: %d" % (name0,nkey1))
+    if nkey1 > 1:
+      print("Name of 1st key: %s" % key1[0])
+    if name0 == dataName:
+      indices1 = [None] * nkey1
+      for k1 in range(nkey1):
+        name1 = key1[k1]
+        s1 = name1.replace('i','')
+        try:
+          indices1[k1] = int(s1)
+        except:
+          print('Key %s cannot be converted to integer' % name1)
+  return indices1        
+
+def extract_information(hf,dataName,indexName,outputFile):
+  hfpath = '/' + dataName + '/' + indexName
+  try:
+    g = hf[hfpath]
+  except:
+    print("Can't find path: %s" % hfpath)
+    sys.exit()
+  if dataName == 'Ellipsoid':
+    ng = g['covar'].shape[0]
+    center = [None] * ng; covar = [None] * ng;
+    wt = [None] * ng;
+    for i in range(ng):
+      center[i] = g['mean'][i,:]
+      covar[i] = g['covar'][i,:,:]
+      wt[i] = g['w'][i]
+    gm = AFM.GMData(weight=wt,center=center,rotation=covar,makeCov=False)
+    gm.write(outputFile)  
+
+if isfile(args.iFile):
+  hf = h5py.File(args.iFile,'r')
+else:
+  print("Input File %s not found" % args.iFile)
+  sys.exit()
+
+info = to_bool(args.info)
+dataName = args.type
+if info:
+  indices = print_summary(hf,dataName)
+
+if args.index is not None:
+  sindexes = AFM.OptionAFM.expand_to_int_list(args.index)  
+else:
+  sys.exit()
+
+for sindex in sindexes:
+  name = 'i' + str(sindex)
+  if sindex in indices:    
+    if len(sindexes) > 1:
+      output = args.oFile + '_' + str(sindex) + '.gmm'
+    else:
+      output = args.oFile
+    print("Output %d to %s\n\t" % (sindex,output),end='')
+    extract_information(hf,dataName,name,output)    
+  else:
+    print("Index %d not found\n" % sindex,end='')
+

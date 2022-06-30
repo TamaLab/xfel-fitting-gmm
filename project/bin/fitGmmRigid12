@@ -1,0 +1,139 @@
+#!/usr/bin/env python
+from os.path import isfile,isdir,join
+import AFM
+import numpy as np
+import yaml
+import glob
+import argparse
+import sys
+
+def to_bool(value):
+    valid = {'true': True, 't': True, '1': True,
+             'false': False, 'f': False, '0': False,
+             }
+    if isinstance(value, bool):
+        return value
+    if not isinstance(value, basestring):
+        raise ValueError('invalid literal for boolean. Not a string.')
+    lower_value = value.lower()
+    if lower_value in valid:
+        return valid[lower_value]
+    else:
+        raise ValueError('invalid literal for boolean: "%s"' % value)
+
+# Parse arguments
+algorithm_choices = ['none','both','rota','trans','transz','transx','transy']
+parser = argparse.ArgumentParser(description='Overlap between two 3D Gaussians')
+parser.add_argument("-s","--source",dest="Source",help="input 1")
+parser.add_argument("-t","--target",dest="Target",help="input 2")
+parser.add_argument("-o","--output",dest="OutFile",help="fitting output file")
+parser.add_argument("-findex","--findex",dest="fitIndexFile",help="fitting index file",
+                    default=None)
+parser.add_argument("-algo","--algo",dest="algo",help="fitting algorithm",
+                    default='both',const='both',nargs='?',choices=algorithm_choices)
+parser.add_argument("-useEllipsoid","--useEllipsoid",dest="useEllipsoid",
+                    help="use data sampled on ellipsoid for fitting",
+                    default=False)
+parser.add_argument("-n","--num_point",dest="n",
+                    help="number of sampled points on gmm",
+                    default=1000)
+
+interactiveSession=False
+try:
+  __file__
+except NameError:
+  interactiveSession=True
+
+if interactiveSession:
+  print("This script can't be run interactively")
+  sys.exit()
+else:
+  args = parser.parse_args()
+
+useEllipsoid = to_bool(args.useEllipsoid)
+
+if isfile(args.Source):  
+  if not useEllipsoid:
+    gmS = AFM.GMData(fromFile=True,filename=args.Source) 
+else:
+  print("Input File1 %s not found" % args.Source)
+  sys.exit()
+if isfile(args.Target):
+  if not useEllipsoid:
+    gmR = AFM.GMData(fromFile=True,filename=args.Target)
+else:
+  print("Input File2 %s not found" % args.Target)
+  sys.exit()
+
+if useEllipsoid:
+  # Just run gmfit
+  import os
+  from shutil import copyfile
+  command = "gmfit -cg %s -sg1 %s -ns 1" % (args.Target,args.Source)  
+  tmpdir = ".gmfit_out"
+  cwd = os.getcwd()    
+  os.mkdir(tmpdir); os.chdir(tmpdir);
+  filei1 = os.path.join(cwd, args.Target)
+  filei2 = os.path.join(cwd, args.Source)
+  copyfile(filei1,args.Target); copyfile(filei2,args.Source);
+  os.system(command)
+  fileO = os.path.join(cwd,args.OutFile)
+  copyfile("gopt1.gmm",fileO)
+  #os.rmdir(tmpdir)
+  
+  sys.exit()
+
+indexS = [i for i in range(gmS.N)]
+indexR = [i for i in range(gmR.N)]
+
+def read_index_file(filename):
+  indexI = []; indexJ = [];
+  with open(filename) as fp:
+    lines = fp.readlines()
+    for line in lines:
+      line = line.strip()
+      index1,index2 = line.split()
+      index1 = [int(i) for i in index1.split(",")]
+      index2 = [int(i) for i in index2.split(",")]
+      indexI.append(index1); indexJ.append(index2);
+  return indexI,indexJ
+
+def find_center(indexList,pset):
+  p = []
+  for i in indexList:
+    p.append(pset[i])
+  p = np.array(p)
+  return np.mean(p,axis=0)
+
+def create_point_set(mapper,pset1,pset2):
+  mset1 = []; mset2 = [];
+  indexI = mapper[0]; indexJ = mapper[1]
+  nmap = len(indexI)
+  for m in range(nmap):
+    i = indexI[m]; j = indexJ[m];
+    c1 = find_center(i,pset1)
+    c2 = find_center(j,pset2)
+    mset1.append(c1); mset2.append(c2);
+  return mset1,mset2 
+
+simple = True
+if args.fitIndexFile is not None:
+  if isfile(args.fitIndexFile):
+    simple = False
+    mapper = read_index_file(args.fitIndexFile)
+algo = args.algo
+target = gmR.center
+source = gmS.center
+if simple:      
+  pc_fit = AFM.pcFit(target=target,source=source,algo=algo)
+  source2 = pc_fit.fit()
+else:    
+  target1,source1 = create_point_set(mapper,target,source)
+  pc_fit = AFM.pcFit(target=target1,source=source1,algo=algo)
+  param = pc_fit.get_fit_param()
+  source2 = pc_fit.apply_fit_param(source,param)
+for ic in range(len(gmS.center)):
+  gmS.center[ic] = source2[ic,:]
+gmS.write(args.OutFile)
+  
+

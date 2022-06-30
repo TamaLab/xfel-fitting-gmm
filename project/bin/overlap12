@@ -1,0 +1,212 @@
+#!/usr/bin/env python
+from os.path import isfile,isdir
+import AFM
+import numpy as np
+import yaml
+import glob
+import argparse
+import sys
+
+def to_bool(value):
+    valid = {'true': True, 't': True, '1': True,
+             'false': False, 'f': False, '0': False,
+             }
+    if isinstance(value, bool):
+        return value
+    if not isinstance(value, basestring):
+        raise ValueError('invalid literal for boolean. Not a string.')
+    lower_value = value.lower()
+    if lower_value in valid:
+        return valid[lower_value]
+    else:
+        raise ValueError('invalid literal for boolean: "%s"' % value)
+
+# Parse arguments
+algorithm_choices = ['none','both','rota','trans','transz','transx','transy']
+parser = argparse.ArgumentParser(description='Overlap between two 3D Gaussians')
+parser.add_argument("-f1","--file1",dest="File1",help="input 1")
+parser.add_argument("-f2","--file2",dest="File2",help="input 2")
+parser.add_argument("-i","--index1",dest="index1",help="input index 1")
+parser.add_argument("-j","--index2",dest="index2",help="input index 2")
+parser.add_argument("-norm","--normalize",dest="normalize",help="whether to normalize?",
+                    default=False)
+parser.add_argument("-misc","--misc",dest="misc",help="whether to perform misc. calculation?",
+                    default=True)
+parser.add_argument("-fit","--fit",dest="fit",help="whether to fit ellipsoid(s)?",
+                    default=False)
+parser.add_argument("-findex","--findex",dest="fitIndexFile",help="fitting index file",
+                    default=None)
+parser.add_argument("-algo","--algo",dest="algo",help="fitting algorithm",
+                    default='both',const='both',nargs='?',choices=algorithm_choices)
+parser.add_argument("-inpfit","--inpfit",dest="fitInpFile",help="fitting input file",
+                    default=None)
+parser.add_argument("-outfit","--outfit",dest="fitOutFile",help="fitting output file",
+                    default=None)
+
+
+interactiveSession=False
+try:
+  __file__
+except NameError:
+  interactiveSession=True
+
+if interactiveSession:
+  print("This script can't be run interactively")
+  sys.exit()
+else:
+  args = parser.parse_args()
+
+if isfile(args.File1):  
+  gm1 = AFM.GMData(fromFile=True,filename=args.File1)
+else:
+  print("Input File1 %s not found" % args.File1)
+  sys.exit()
+if isfile(args.File2):
+  gm2 = AFM.GMData(fromFile=True,filename=args.File2)
+else:
+  print("Input File2 %s not found" % args.File2)
+  sys.exit()
+
+if args.fitInpFile is None:
+  args.fitInpFile = args.File1
+  gmR = gm1
+else:
+  if isfile(args.fitInpFile):
+    gmR = AFM.GMData(fromFile=True,filename=args.fitInpFile)
+  else:
+    print("Input Fitting File %s not found" % args.fitInpFile)
+    sys.exit()
+
+if args.index1 is not None:
+  try:
+    index1 = [int(args.index1)]
+  except:
+    raise Exception("-i option not followed by an integer")
+  if 0 <= index1[0] < gm1.N:
+    pass
+  else:
+    raise Exception("-i index is invalid")
+else:
+  index1 = [i for i in range(gm1.N)]
+
+if args.index2 is not None:
+  try:
+    index2 = [int(args.index2)]
+  except:
+    raise Exception("-j option not followed by an integer")
+  if 0 <= index2[0] < gm2.N:
+    pass
+  else:
+    raise Exception("-j index is invalid")
+else:
+  index2 = [i for i in range(gm2.N)]
+
+def read_index_file(filename):
+  indexI = []; indexJ = [];
+  with open(filename) as fp:
+    lines = fp.readlines()
+    for line in lines:
+      line = line.strip()
+      index1,index2 = line.split()
+      index1 = [int(i) for i in index1.split(",")]
+      index2 = [int(i) for i in index2.split(",")]
+      indexI.append(index1); indexJ.append(index2);
+  return indexI,indexJ
+
+def find_center(indexList,pset):
+  p = []
+  for i in indexList:
+    p.append(pset[i])
+  p = np.array(p)
+  return np.mean(p,axis=0)
+
+def create_point_set(mapper,pset1,pset2):
+  mset1 = []; mset2 = [];
+  indexI = mapper[0]; indexJ = mapper[1]
+  nmap = len(indexI)
+  for m in range(nmap):
+    i = indexI[m]; j = indexJ[m];
+    c1 = find_center(i,pset1)
+    c2 = find_center(j,pset2)
+    mset1.append(c1); mset2.append(c2);
+  return mset1,mset2 
+
+normaliseOpt = to_bool(args.normalize)
+misc = to_bool(args.misc)
+fit = to_bool(args.fit)
+
+if fit:
+  simple = True
+  if args.fitIndexFile is not None:
+    if isfile(args.fitIndexFile):
+      simple = False
+      mapper = read_index_file(args.fitIndexFile)
+  algo = args.algo
+  target = gmR.center
+  source = gm2.center
+  if simple:      
+    pc_fit = AFM.pcFit(target=target,source=source,algo=algo)
+    source2 = pc_fit.fit()
+  else:    
+    target1,source1 = create_point_set(mapper,target,source)
+    pc_fit = AFM.pcFit(target=target1,source=source1,algo=algo)
+    param = pc_fit.get_fit_param()
+    source2 = pc_fit.apply_fit_param(source,param)
+  for ic in range(len(gm2.center)):
+    gm2.center[ic] = source2[ic,:]
+  if args.fitOutFile is not None:
+    gm2.write(args.fitOutFile)
+  
+
+gi = [None] * gm1.N
+gj = [None] * gm2.N
+if normaliseOpt:
+  ov_ii = [None] * gm1.N
+  ov_jj = [None] * gm2.N
+
+for i in range(gm1.N):
+  if i in index1:
+    gi[i] = gm1._create_input_gauss(i)
+    if normaliseOpt:
+      ovObj = AFM.Overlap(gi[i],gi[i])
+      ov_ii[i] = ovObj.get_overlap_gaussian()
+
+for j in range(gm2.N):
+  if j in index2:
+    gj[j] = gm2._create_input_gauss(j)
+    if normaliseOpt:
+      ovObj = AFM.Overlap(gj[j],gj[j])
+      ov_jj[j] = ovObj.get_overlap_gaussian()
+
+mat = np.zeros((gm1.N,gm2.N))
+if misc:
+  dist = np.zeros((gm1.N,gm2.N))
+
+for i in range(gm1.N):
+  for j in range(gm2.N):
+    if i in index1 and j in index2:
+      ovObj = AFM.Overlap(gi[i],gj[j])
+      mat[i,j] = ovObj.get_overlap_gaussian()
+      if normaliseOpt:
+        deno = np.sqrt(ov_ii[i] * ov_jj[j])
+        mat[i,j] /= deno
+      if misc:
+        M1 = gi[i]['mu']; M2 = gj[j]['mu'];
+        dist[i,j] = np.linalg.norm(M1-M2)
+
+print_flag = np.zeros((gm1.N,gm2.N),dtype=int)
+for i in range(gm1.N):
+  for j in range(gm2.N):
+    if i in index1 and j in index2:
+      if print_flag[i,j] == 0:
+        if misc:
+          print("File1: %s Index1: %d File2: %s Index2: %d OV: %.12e W1: %.12e W2: %.12e Dist: %.12e" % 
+                (args.File1,i,args.File2,j,mat[i,j],gm1.W[i],gm2.W[j],dist[i,j]))
+        else:
+          print("File1: %s Index1: %d File2: %s Index2: %d OV: %.12e W1: %.12e W2: %.12e" % 
+              (args.File1,i,args.File2,j,mat[i,j],gm1.W[i],gm2.W[j]))
+        print_flag[i,j] = 1
+        if args.File1 == args.File2:
+          print_flag[j,i] = 1
+
+

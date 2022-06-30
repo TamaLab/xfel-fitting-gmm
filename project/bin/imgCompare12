@@ -1,0 +1,69 @@
+#!/usr/bin/env python
+from os.path import isfile,isdir
+import AFM
+import numpy as np
+import yaml
+import glob
+import argparse
+import sys
+
+# Parse arguments
+
+parser = argparse.ArgumentParser(description='Compare AFM Images')
+parser.add_argument("-f","--file",dest="projectFile",help="input options",metavar="FILE",
+                    default="icc12.yaml")
+
+interactiveSession=False
+try:
+  __file__
+except NameError:
+  interactiveSession=True
+
+if interactiveSession:
+  args = parser.parse_args("-f icc12.yaml".split())
+else:
+  args = parser.parse_args()
+
+if isfile(args.projectFile):
+  print("Reading project options from projectFile %s" % args.projectFile)
+  with open(args.projectFile, 'r') as stream:
+    try:
+      opt = yaml.load(stream)
+    except yaml.YAMLError as exc:
+      print(exc)
+else:  
+  raise Exception("Input Project File %s not found" % args.projectFile)
+
+targetFileName = opt['IMGFILE1']
+referenceFileName = opt['IMGFILE2']
+
+def get_image_correlation_pairwise(targetFileName,referenceFileName,opt):
+  fromArray = False
+  mode = opt["IMGCOMPARE"]["MODE"]
+  tcrop = opt['IMGCOMPARE']['CROP']['PROJECTION']
+  bgfill = opt["IMGCOMPARE"]["BGFILL"]
+  method = opt["IMGCOMPARE"]["CORRELATION_MEASURE"]
+  rcrop = opt['IMGCOMPARE']['CROP']['IMAGE']
+  normProjection = opt['IMGCOMPARE']['NORMPROJECTION']
+  tbgcorr = opt['IMGCOMPARE']['BGCORRECTION']['PROJECTION']
+  rbgcorr = opt['IMGCOMPARE']['BGCORRECTION']['IMAGE']
+  superpose = opt['IMGCOMPARE']['SUPERPOSE']
+  qval = 50.0
+  targetOpt = AFM.ImageProcessOption(fromarray=fromArray,crop=tcrop,bgcorr=tbgcorr,
+                                        mode=mode,normalize=normProjection,bgfill=bgfill,
+                                        measure=method)
+  referenceOpt = AFM.ImageProcessOption(fromarray=fromArray,crop=rcrop,bgcorr=rbgcorr,
+                                           mode=mode,normalize=normProjection,bgfill=bgfill,
+                                           measure=method)    
+  compare = AFM.ImageCompare(target=targetFileName,reference=referenceFileName,
+                         targetProcessOption=targetOpt,referenceProcessOption=referenceOpt,
+                         postprocess=True,superpose=superpose)
+  ovOnly = opt['IMGCOMPARE']['CORRELATION']['OVERLAP']
+  unOnly = opt['IMGCOMPARE']['CORRELATION']['UNION']
+  cc = compare.getCorrelation(overlapOnly=ovOnly,unionOnly=unOnly,q=qval)
+  compare.plotCompareImage('test12.png',overlapOnly=ovOnly,unionOnly=unOnly,q=qval)
+  return cc
+
+cc = get_image_correlation_pairwise(targetFileName,referenceFileName,opt)
+print(cc)
+

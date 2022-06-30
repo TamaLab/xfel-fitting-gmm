@@ -1,0 +1,51 @@
+---
+
+MODE: Debug
+NTHR: 8
+DPI: 100
+
+RESTRAINTS:
+  DOMAIN_EXCL: 
+    EVALUATE: True
+    STRENGTH: 0.02
+OPTIMIZE:
+  MAX_MOVEMENT:
+    TRANSLATION: 1.0
+    ROTATION: 10.0
+    SCALE: 0.0
+  MOVERS:
+    DOMAIN: All      
+    RESIDUE: None
+    NPROPOSE: Auto
+  TEMP: 1.0
+  TEMP_MECH: 300.0
+  WEIGHT: 100000.0
+  STEPS: 50000
+  STOPBY: propose
+  LIMIT_PROPOSAL_PERCENT: 0.001
+  PERIOD_TRJ: 1
+  TRJFILE: s1.trj5
+  BIAS:
+    METHOD: naive
+    PARAM: 0.0
+  DRIFT: none
+  OUTPUT:
+    IMAGE: True
+    IMAGEPATH: s1
+    IMAGEFILE: s1_
+    IMAGEPERIOD: 1
+    STAT: True
+    STATPATH: s1
+    STATFILE: s1_
+    STATPERIOD: 1
+    GMDAT: True
+    GMDATPATH: s1
+    GMDATFILE: s1_
+    GMDATPERIOD: 1
+correlation: nagai
+det_width: 0.20e10
+det_dist: 10.0e10
+wave_length: 1.0
+SEED: 900
+lowest_k: 0.01
+circle_width: 0.002

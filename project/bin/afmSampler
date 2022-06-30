@@ -1,0 +1,147 @@
+#!/usr/bin/env python
+
+from datetime import datetime
+start_clock = datetime.now()
+
+import io,struct,sys,time,random
+from os.path import splitext,isfile,isdir
+
+from threading import Thread
+
+import numpy as np
+import AFM
+import yaml
+import argparse
+
+# !! following two lines may be not required
+import matplotlib
+matplotlib.use('Agg')
+
+import matplotlib.pyplot as plt
+import copy
+
+# Initial Set up
+
+dpi = plt.gcf().dpi
+
+# Parse arguments
+
+parser = argparse.ArgumentParser(description='Sample against AFM Image')
+parser.add_argument("-f","--file",dest="projectFile",help="input options",metavar="FILE",
+                    default="inp.yaml")
+parser.add_argument("-o","--outdir",dest="outDir",help="output directory",
+                    default="out")
+parser.add_argument("-s","--seed",dest="seed",help="random seed",metavar="SEED",
+                    default=100,type=int)
+parser.add_argument("-ri","--restartInp",dest="restartFileInp",help="restart inp",
+                    metavar="RESTART FILE INP",default=None)
+parser.add_argument("-ro","--restartOut",dest="restartFileOut",help="restart out",
+                    metavar="RESTART FILE OUT",default=".dump")
+interactiveSession=False
+try:
+  __file__
+except NameError:
+  interactiveSession=True
+
+if interactiveSession:
+  args = parser.parse_args("-f inp.yaml".split())
+else:
+  args = parser.parse_args()
+
+if isfile(args.projectFile):
+  print("Reading project options from projectFile %s" % args.projectFile)
+  with open(args.projectFile, 'r') as stream:
+    try:
+      opt = yaml.load(stream)
+    except yaml.YAMLError as exc:
+      print(exc)
+else:  
+  raise Exception("Input Project File %s not found" % args.projectFile)
+
+if isdir(args.outDir):
+  print("Output all files under %s" % args.outDir)
+  outDir = args.outDir
+else:
+  raise Exception("Output Directory %s not found" % args.outDir)
+  
+
+if 'SEED' in opt: 
+  seed = opt['SEED']
+else: 
+  seed = args.seed
+  opt['SEED'] = seed
+
+# Set-up options
+
+gopt = AFM.OptionAFM()
+nerr = gopt.reset_options(opt)
+if nerr > 0: sys.exit()
+
+# Initialize a project
+project = AFM.Project(gopt)
+
+# Read Input
+project.set_input(asis=False,set_representation=True)
+project.set_image(expandProperties=True)
+#if opt['INPUTFILE']['FORMAT'] == 'pdb':
+#  p0 = AFM.Project(gopt)
+#  p0.set_input(asis=True,set_representation=True)
+#  translation = project.opt['MESH']['OFFSET'] - p0.pdb.objMin
+#  print("Translation applied: %.8f %.8f %.8f" % (translation[0],translation[1],translation[2]))
+
+# Initial Set up of mesh
+project.set_mesh()
+
+# Get initial correlation, that also defines approx. transformation to
+# to match to given image
+project.get_initialCorrelation(plotFile = outDir + "/preset.png")
+icc = project.initCorr
+
+# Move coordinate/gmm that uses the approx. transformation defined now
+project.MoveStructureByImage()
+
+# Set up ellipsoid representation for pdb input and reset mesh
+if opt['INPUTFILE']['FORMAT'] == 'pdb':
+  p0 = AFM.Project(gopt)
+  p0.set_input(asis=True,set_representation=True)
+  translation = project.opt['MESH']['OFFSET'] - p0.pdb.objMin
+  print("Translation applied: %.8f %.8f %.8f" % (translation[0],translation[1],translation[2]))
+  project.set_representation()
+
+# Reset mesh
+project.set_mesh()
+
+# Get correlation now without transforming the image and coordinate
+project.get_initialCorrelation(shift=False,plotFile = outDir + "/init.png")
+pcc = project.initCorr
+
+project.representation.mesh.buildVRML(col=[0.,1.,1.])
+project.representation.mesh.writeVRML(outDir + "/init.vrml")
+project.representation.mesh.buildGMData()
+project.representation.mesh.writeGMData(outDir + "/init.gmm")
+
+if np.abs(pcc-icc) > 1e-2: 
+  print("Correlation differs significantly due to transformation: Final: %.4f Initial: %.4f" % (pcc,icc))
+else:
+  print("Correlation differs (small) due to transformation: Final: %.4f Initial: %.4f" % (pcc,icc))
+
+# Write transformed coordinates
+if opt['INPUTFILE']['FORMAT'] == 'pdb':
+  project.write_pdb();
+
+project.set_movers()
+project.set_restraints()
+
+representation = project.representation
+restr = project.evaluate_restraints(representation)
+project.print_evaluated_scores(restr)
+
+if args.restartFileInp is not None:
+  project.sample(out=outDir,restartFileInput=args.restartFileInp,
+                 restartFileOutput=args.restartFileOut)
+else:
+  project.sample(out=outDir,restartFileOutput=args.restartFileOut)
+
+end_clock = datetime.now()
+elap_clock = end_clock - start_clock; elap_ms = int(elap_clock.total_seconds() * 1000)
+print("Time Taken (milliseconds) : %d" % elap_ms)

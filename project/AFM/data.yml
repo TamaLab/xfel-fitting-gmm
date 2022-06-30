@@ -1,0 +1,128 @@
+---
+PROJECT: unk
+MODE: Debug
+CHECK_OPTION: False
+NTHR: 8
+INPUTFILE:
+  FORMAT: unk
+  NAME: unk
+OUTPUTFILE:
+  IMGFILE: unk
+  VRMLFILE: unk
+  GMMFILE: unk
+ELLIPSOID:
+  NLEVEL: 1
+  SCALESD: 
+  - 1.00
+  WEIGHT: 
+  - volume
+  LEVEL:
+  - unk
+MESH:
+  GRIDSIZE: 1.0
+  SCALERADII: 1.0  
+  MAGNIFICATION: 1.0
+  RESOLUTION:
+    X: 
+      VALUE: unk
+      FORMAT: STEP
+    Y:
+      VALUE: unk
+      FORMAT: STEP
+    Z:
+      VALUE: 255.0
+      FORMAT: LENGTH
+  RANGE:
+    X: unk
+    Y: unk
+    Z: unk
+  BUFFER:
+    X: unk
+    Y: unk
+    Z: unk
+  ZNOISE:
+    FACTOR: 0.0
+    PERCENTILE: 0
+  LEVEL: unk
+IMGCOMPARE:
+  MODE: up_is_dark
+  BGCORRECTION:
+    PROJECTION: False
+    IMAGE: False
+  CROP:
+    PROJECTION: False
+    IMAGE: False
+  NORMPROJECTION: True
+  SUPERPOSE: False
+  CORRELATION:
+    OVERLAP: False
+    UNION: False
+    Q: 50.0
+  PLOTCORR:
+    OVERLAP: False
+    UNION: False
+    Q: none
+  CORRELATION_MEASURE: pearson
+RESTRAINTS:
+  DOMAIN_PAIR: 
+    EVALUATE: False
+    STRENGTH: 2000
+  DOMAIN_EXCL: 
+    EVALUATE: False
+    STRENGTH: 0.1
+  RESIDUE_CONNECTION:
+    EVALUATE: False
+    STRENGTH: 200
+  RESIDUE_TRIPLET:
+    EVALUATE: False
+    STRENGTH: 100
+  RESIDUE_QUARTET:
+    EVALUATE: False
+    STRENGTH: 10
+  RESIDUE_INTERNAL:
+    EVALUATE: False
+    STRENGTH: 10
+  RESIDUE_EXCL:
+    EVALUATE: False
+    STRENGTH: 1
+OPTIMIZE:
+  MAX_MOVEMENT:
+    TRANSLATION: 0.5
+    ROTATION: 5.0
+  MOVERS:
+    DOMAIN: None 
+    RESIDUE: None
+    NPROPOSE: Auto
+    PROPOSALTYPE: ASYNC
+    USEPROJ: False
+    USEPROJLEVEL: 0
+  TEMP_MECH: 300.0
+  TEMP: 300.0
+  ANNEAL: False
+  WEIGHT: 10.0
+  STEPS: 200
+  STOPBY: accept
+  LIMIT_PROPOSAL_PERCENT: 0.1
+  PERIOD_TRJ: 1
+  TRJFILE: out.trj5 
+  DRIFT: none
+  BIAS:
+    METHOD: NAIVE
+    PARAM: 0.0
+  OUTPUT:
+    IMAGE: False
+    IMAGEPATH: unk
+    IMAGEFILE: sample_
+    IMAGEPERIOD: 1
+    STAT: False
+    STATPATH: unk
+    STATFILE: sample_
+    STATPERIOD: 1
+    ELLIP: False
+    ELLIPPATH: unk
+    ELLIPFILE: sample_
+    ELLIPPERIOD: 1
+    GMDAT: False
+    GMDATPATH: unk
+    GMDATFILE: sample_
+    GMDATPERIOD: 1
